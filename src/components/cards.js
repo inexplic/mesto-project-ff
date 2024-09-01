@@ -30,3 +30,5 @@ const initialCards = [
       alt: "Заснеженный мыс на замерзшем озере 'Байкал'.",
     }
 ];
+
+export { initialCards };
