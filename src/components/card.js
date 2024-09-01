@@ -8,23 +8,25 @@ function likeCard(event) {
     eventTarget.classList.toggle('card__like-button_is-active');
 }
 
-function createCard(cardData, cardDelete, cardLike, cardPopup) {
+function createCard(cardData, deleteCard, likeCard, openPopupCard) {
     const cardTemplate = document.querySelector('#card-template').content;
     const cardItem = cardTemplate.querySelector('.card').cloneNode(true);
 
-    cardItem.querySelector('.card__title').textContent = cardData.name;
-    cardItem.querySelector('.card__image').src = cardData.link;
-    cardItem.querySelector('.card__image').alt = cardData.alt;
+    const cardImage = cardItem.querySelector('.card__image');
+    const cardTitle = cardItem.querySelector('.card__title');
+
+    cardTitle.textContent = cardData.name;
+    cardImage.src = cardData.link;
+    cardImage.alt = cardData.alt;
 
     const deleteButton = cardItem.querySelector('.card__delete-button');
-    deleteButton.addEventListener('click', cardDelete);
+    deleteButton.addEventListener('click', deleteCard);
 
     const likeButton = cardItem.querySelector('.card__like-button');
-    likeButton.addEventListener('click', cardLike);
+    likeButton.addEventListener('click', likeCard);
 
-    const popupImage = cardItem.querySelector('.card__image');
-    popupImage.addEventListener('click', function(evt) {
-        cardPopup(cardData);
+    cardImage.addEventListener('click', function(evt) {
+        openPopupCard(cardData);
     })
 
     return cardItem;
