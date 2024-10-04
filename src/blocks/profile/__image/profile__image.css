@@ -7,6 +7,50 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+  position: relative;
+  z-index: 0;
+}
+
+.profile__image:hover {
+  cursor: pointer;
+}
+
+.profile__image::before {
+  content: '';
+  width: 120px;
+  height: 120px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s;
+}
+
+.profile__image::after {
+  content: '';
+  width: 120px;
+  height: 120px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background-image: url('../../../images/edit-avatar-icon.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.profile__image:hover::before {
+  opacity: 1;
+  z-index: 1;
+}
+
+.profile__image:hover::after {
+  opacity: 1;
+  z-index: 2;
 }
 
 @media screen and (max-width: 740px) {
