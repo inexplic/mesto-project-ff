@@ -82,14 +82,16 @@ function deleteLikeApi(cardId) {
     .then(handleResponse);
 }
 
-function patchAvatar(avatar) {
+function patchAvatar(avatarURL) {
     return fetch(URL + '/users/me/avatar', {
         method: 'PATCH',
         headers: {
             authorization: token,
             'Content-type': 'application/json'
         },
-        body: JSON.stringify(avatar)
+        body: JSON.stringify({
+            avatar: avatarURL
+        })
     })
     .then(handleResponse);
 }

@@ -32,6 +32,21 @@ const linkInput = formCard.elements.link;
 const formEditAvatar = document.forms['edit-profile-avatar'];
 const avatarLinkInput = formEditAvatar.elements['avatar-link'];
 
+function loadingSave(event, isLoading) {
+    const formItem = event.target;
+    const buttonItem = formItem.querySelector('.popup__button');
+    if (isLoading) {
+        buttonItem.textContent = 'Сохранение...'
+    } else {
+        buttonItem.textContent = 'Сохранить'
+    }
+}
+
+function loadingProfileAvatar() {
+    const loader = document.querySelector('.loader');
+    loader.classList.remove('loader_visible');
+}
+
 // функция открытия изображения карточки
 function openPopupImage(cardItem) {
     popupImage.src = cardItem.link;
@@ -63,8 +78,12 @@ buttonAdd.addEventListener('click', function(evt) {
     clearValidation(formCard, validationConfig);
 })
 
+// открытие модального окна изменения аватарки профиля
 profAvatar.addEventListener('click', function(evt) {
     openModal(popupEditAvatar);
+
+    avatarLinkInput.value = '';
+    clearValidation(formEditAvatar, validationConfig);
 })
 
 // слушатель для закрытия модальных окон
@@ -80,7 +99,7 @@ popupContainer.forEach(function(popup) {
 // обработчик отправки формы редактора профиля и обновление данных на сервере
 function handleEditFormSubmit(evt) {
     evt.preventDefault();
-
+    loadingSave(evt, true);
     const profInfo = {};
 
     profInfo.name = nameInput.value;
@@ -90,20 +109,47 @@ function handleEditFormSubmit(evt) {
         .then((data) => {
             profTitle.textContent = data.name;
             profDescription.textContent = data.about;
-            console.log(data);
             closeModal(popupEdit);
         })
-        .catch((error) => {
-            console.error('Ошибка!', error);
+        .catch((err) => {
+            console.error('Ошибка!', err);
+        })
+        .finally(() => {
+            loadingSave(evt, false);
         })
 }
 
 // слушатель отправки формы редактора профиля
 formEdit.addEventListener('submit', handleEditFormSubmit)
 
+// обработчик отправки формы изменения аватарки профиля
+function handleEditAvatar(evt) {
+    evt.preventDefault();
+    loadingSave(evt, true);
+
+    const avatarURL = avatarLinkInput.value;
+
+    patchAvatar(avatarURL)
+        .then((data) => {
+            profAvatar.style.backgroundImage = `url('${data.avatar}')`;
+
+            closeModal(popupEditAvatar);
+        })
+        .catch((err) => {
+            console.error('Ошибка!', err);
+        })
+        .finally(() => {
+            loadingSave(evt, false);
+        })
+}
+
+// слушатель отправки формы изменения аватарки профиля
+formEditAvatar.addEventListener('submit', handleEditAvatar)
+
 // обработчик отправки формы добавления карточки и добавление карточки на сервере
 function handleAddFormSubmit(evt) {
     evt.preventDefault();
+    loadingSave(evt, true);
     const newCard = {
         name: '',
         link: '',
@@ -123,6 +169,9 @@ function handleAddFormSubmit(evt) {
         .catch((err) => {
             console.log(err);
         })
+        .finally(() => {
+            loadingSave(evt, false);
+        })
 }
 
 // слушатель отправки формы добавления карточки
@@ -133,24 +182,26 @@ enableValidation(validationConfig);
 
 // отображение карточек с сервера на странице
 Promise.all([getUserInfo(), getAllCards()])
-.then(([profInfo, cards]) => {
-    profTitle.textContent = profInfo.name;
-    profDescription.textContent = profInfo.about;
+    .then(([profInfo, cards]) => {
+        profTitle.textContent = profInfo.name;
+        profDescription.textContent = profInfo.about;
+        profAvatar.style.backgroundImage = `url('${profInfo.avatar}')`;
 
-    cards.forEach((item) => {
-        const cardItem = createCard(item, openPopupImage, profInfo);
+        cards.forEach((item) => {
+            const cardItem = createCard(item, openPopupImage, profInfo);
     
-        const ownerId = item.owner._id;
-        const userId = profInfo._id;
+            const ownerId = item.owner._id;
+            const userId = profInfo._id;
 
-        if (ownerId !== userId) {
-            const deleteButton = cardItem.querySelector('.card__delete-button');
-            deleteButton.style.display = 'none';
-        }
+            if (ownerId !== userId) {
+                const deleteButton = cardItem.querySelector('.card__delete-button');
+                deleteButton.style.display = 'none';
+            }
 
-        placesList.append(cardItem);
-  });
-})
-.catch((err) => {
-    console.log(err);
-})
+            placesList.append(cardItem);
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+    .finally(loadingProfileAvatar);

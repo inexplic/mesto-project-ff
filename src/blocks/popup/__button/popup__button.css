@@ -11,7 +11,11 @@
   border-radius: 2px;
   border: none;
   transition: visibility 0s, background 0.3s;
-  margin-top: 27px;
+  margin-top: 10px;
+}
+
+.popup_type_edit-avatar .popup__button {
+
 }
 
 .popup__button:hover {
