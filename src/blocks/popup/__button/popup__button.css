@@ -14,10 +14,6 @@
   margin-top: 10px;
 }
 
-.popup_type_edit-avatar .popup__button {
-
-}
-
 .popup__button:hover {
   background: rgba(0, 0, 0, 0.8);
   cursor: pointer;

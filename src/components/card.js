@@ -51,11 +51,14 @@ function createCard(cardData, openPopupCard, profInfo) {
     cardImage.src = cardData.link;
     cardImage.alt = `${cardData.name}`;
 
-
     const deleteButton = cardItem.querySelector('.card__delete-button');
-    deleteButton.addEventListener('click', (event) => {
-        deleteCard(event, cardData);
-    })
+    if (cardData.owner._id !== profInfo._id) {
+        deleteButton.style.display = 'none';
+    } else {
+        deleteButton.addEventListener('click', (event) => {
+            deleteCard(event, cardData);
+        })
+    }
 
     const likeButton = cardItem.querySelector('.card__like-button');
     likeButton.addEventListener('click', (event) => {
